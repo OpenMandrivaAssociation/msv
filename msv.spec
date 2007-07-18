@@ -37,7 +37,7 @@
 Summary:        Multischema Validator
 Name:           msv
 Version:        1.2
-Release:        %mkrel 0.1.%{cvsdate}.3.1.1
+Release:        %mkrel 0.1.%{cvsdate}.3.1.2
 Epoch:          1
 License:        BSD-Style
 URL:            http://msv.dev.java.net
@@ -65,8 +65,8 @@ BuildRequires:  relaxngDatatype
 BuildRequires:  servlet
 BuildRequires:  xalan-j2
 BuildRequires:  xerces-j2
-BuildRequires:  xml-commons-apis
-BuildRequires:  xml-commons-resolver
+BuildRequires:  xml-commons-jaxp-1.3-apis
+BuildRequires:  xml-commons-resolver12
 BuildRequires:  ant-trax
 BuildRequires:  java-javadoc
 BuildRequires:  xerces-j2-javadoc-impl
@@ -106,8 +106,8 @@ Requires:       isorelax
 Requires:       relaxngDatatype
 Requires:       servlet
 Requires:       xerces-j2
-Requires:       xml-commons-apis
-Requires:       xml-commons-resolver
+Requires:       xml-commons-jaxp-1.3-apis
+Requires:       xml-commons-resolver12
 Requires:       msv-xsdlib
 Requires:         jpackage-utils >= 0:1.6
 Provides:       msv-strict <= %{version}-%{release}
@@ -143,8 +143,8 @@ Requires:       isorelax
 Requires:       relaxngDatatype
 Requires:       xalan-j2
 Requires:       xerces-j2
-Requires:       xml-commons-apis
-Requires:       xml-commons-resolver
+Requires:       xml-commons-jaxp-1.3-apis
+Requires:       xml-commons-resolver12
 Requires:       msv-msv
 Requires:       msv-xsdlib
 Requires:         jpackage-utils >= 0:1.6
@@ -166,7 +166,7 @@ Group:          Development/Java
 Requires:       isorelax
 Requires:       relaxngDatatype
 Requires:       xerces-j2
-Requires:       xml-commons-apis
+Requires:       xml-commons-jaxp-1.3-apis
 Requires:       msv-msv
 Requires:       msv-xsdlib
 Requires:         jpackage-utils >= 0:1.6
@@ -179,7 +179,7 @@ Summary:        XmlGen
 Group:          Development/Java
 Requires:       isorelax
 Requires:       relaxngDatatype
-Requires:       xml-commons-apis
+Requires:       xml-commons-jaxp-1.3-apis
 Requires:       xerces-j2
 Requires:       msv-msv
 Requires:       msv-xsdlib
@@ -251,7 +251,7 @@ ln -sf $(build-classpath ant) ant.jar
 ln -sf $(build-classpath isorelax) isorelax.jar
 ln -sf $(build-classpath junit) junit.jar
 ln -sf $(build-classpath relaxngDatatype) relaxngDatatype.jar
-ln -sf $(build-classpath xml-commons-resolver) resolver.jar
+ln -sf $(build-classpath xml-commons-resolver12) resolver.jar
 %if ! %{bootstrap}
 ln -sf $(build-classpath jdom) jdom.jar
 ln -sf $(build-classpath saxon) saxon.jar
@@ -259,7 +259,7 @@ ln -sf $(build-classpath saxon) saxon.jar
 ln -sf $(build-classpath servlet) servlet.jar
 ln -sf $(build-classpath xalan-j2) xalan.jar
 ln -sf $(build-classpath xerces-j2) xercesImpl.jar
-ln -sf $(build-classpath xml-commons-apis) xmlParserAPIs.jar
+ln -sf $(build-classpath xml-commons-jaxp-1.3-apis) xmlParserAPIs.jar
 popd
 
 %{ant} release

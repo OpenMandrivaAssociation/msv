@@ -37,7 +37,7 @@
 Summary:        Multischema Validator
 Name:           msv
 Version:        1.2
-Release:        %mkrel 0.1.%{cvsdate}.3.1.3
+Release:        %mkrel 0.1.%{cvsdate}.3.1.4
 Epoch:          1
 License:        BSD-Style
 URL:            http://msv.dev.java.net
@@ -52,7 +52,7 @@ Patch0:          %{name}-build_xmls.patch
 Patch1:         %{name}-disable-crimson.patch
 # Class-Path
 Patch2:         %{name}-noclasspathsinmanifests.patch
-BuildRequires:  ant >= 0:1.6, jpackage-utils >= 0:1.6
+BuildRequires:  ant >= 0:1.6, java-rpmbuild >= 0:1.6
 BuildRequires:  javacc
 BuildRequires:  junit
 %if ! %{bootstrap}

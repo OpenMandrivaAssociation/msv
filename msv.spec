@@ -37,7 +37,7 @@
 Summary:        Multischema Validator
 Name:           msv
 Version:        1.2
-Release:        %mkrel 0.1.%{cvsdate}.3.1.4
+Release:        %mkrel 0.1.%{cvsdate}.3.1.5
 Epoch:          1
 License:        BSD-Style
 URL:            http://msv.dev.java.net
@@ -85,8 +85,6 @@ BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
 
 %if %{gcj_support}
 BuildRequires:    java-gcj-compat-devel
-Requires(post):   java-gcj-compat
-Requires(postun): java-gcj-compat
 %endif
 
 %description
@@ -262,7 +260,7 @@ ln -sf $(build-classpath xerces-j2) xercesImpl.jar
 ln -sf $(build-classpath xml-commons-jaxp-1.3-apis) xmlParserAPIs.jar
 popd
 
-%{ant} release
+%{ant} -Dant.build.javac.source=1.4 release
 
 %install
 rm -rf $RPM_BUILD_ROOT

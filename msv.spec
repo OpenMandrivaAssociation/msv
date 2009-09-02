@@ -37,7 +37,7 @@
 Summary:        Multischema Validator
 Name:           msv
 Version:        1.2
-Release:        %mkrel 0.1.%{cvsdate}.3.1.7
+Release:        %mkrel 0.1.%{cvsdate}.3.1.8
 Epoch:          1
 License:        BSD-Style
 URL:            http://msv.dev.java.net

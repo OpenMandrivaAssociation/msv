@@ -37,7 +37,7 @@
 Summary:        Multischema Validator
 Name:           msv
 Version:        1.2
-Release:        %mkrel 0.1.%{cvsdate}.3.1.10
+Release:        %mkrel 0.1.%{cvsdate}.3.1.11
 Epoch:          1
 License:        BSD-Style
 URL:            http://msv.dev.java.net
@@ -235,9 +235,9 @@ cp tempf $m
 done
 rm tempf
 
-%patch0 -b .sav
-%patch1 -b .sav2
-%patch2
+%patch0 -p0 -b .sav
+%patch1 -p0 -b .sav2
+%patch2 -p0
 
 %{__perl} -pi -e 's/1\.[23]/1.4/g' `find . -type f -name build.xml`
 

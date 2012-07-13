@@ -1,432 +1,320 @@
-# Copyright (c) 2000-2007, JPackage Project
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-#
-# 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the
-#    distribution.
-# 3. Neither the name of the JPackage Project nor the names of its
-#    contributors may be used to endorse or promote products derived
-#    from this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
+Name:          msv
+Epoch:         1
+Version:       2009.1
+Release:       11
+Summary:       Multi-Schema Validator
+Group:         Development/Java
+License:       BSD
+URL:           https://msv.dev.java.net/
 
-%define gcj_support 1
+# To generate tarball from upstream source control:
+# $ svn export https://msv.dev.java.net/svn/msv/tags/msv-2009.1/ --username guest
+# $ tar zcf msv-2009.1.tar.gz msv-2009.1
+Source0:       %{name}-%{version}.tar.gz
 
-%define bootstrap %{?_with_bootstrap:1}%{!?_with_bootstrap:%{?_without_bootstrap:0}%{!?_without_bootstrap:%{?_bootstrap:%{_bootstrap}}%{!?_bootstrap:0}}}
+# The "maven-wagon-svn" plug-in is not in Fedora
+Patch0:        %{name}-disable-maven-wagon-svn.patch
 
-%define cvsdate 20050722
-
-Summary:        Multischema Validator
-Name:           msv
-Version:        1.2
-Release:        %mkrel 0.1.%{cvsdate}.3.1.11
-Epoch:          1
-License:        BSD-Style
-URL:            http://msv.dev.java.net
-Group:          Development/Java
-# cvs -d :pserver:guest@cvs.dev.java.net:/cvs export -r msv-20050722 msv ; mv msv msv-20050722 tar zcf msv-20050722.tar.gz msv-*
-Source0:        %{name}-%{cvsdate}.tar.gz
-# cvs -d :pserver:guest@cvs.dev.java.net:/cvs co -r msv-20060821 msv/xsdlib/src/com/sun/msv/datatype/xsd/DateType.java
-# This is needed for the package to build
-Source1:        %{name}-20060821-Datatype.java
-Patch0:          %{name}-build_xmls.patch
 # There is a build time dependency on crimson which needs to be stripped
-Patch1:         %{name}-disable-crimson.patch
-# Class-Path
-Patch2:         %{name}-noclasspathsinmanifests.patch
-BuildRequires:  ant >= 0:1.6, java-rpmbuild >= 0:1.6
-BuildRequires:  javacc
-BuildRequires:  junit
-%if ! %{bootstrap}
-BuildRequires:  jdom
-BuildRequires:  saxon
-%endif
+# (We're using xerces-j2 instead)
+Patch1:        %{name}-disable-crimson.patch
 
-BuildRequires:  isorelax
-BuildRequires:  relaxngDatatype
-BuildRequires:  servlet
-BuildRequires:  xalan-j2
-BuildRequires:  xerces-j2
-BuildRequires:  xml-commons-jaxp-1.3-apis
-BuildRequires:  xml-commons-resolver12
-BuildRequires:  ant-trax
-BuildRequires:  java-javadoc
-BuildRequires:  xerces-j2-javadoc-impl
-BuildRequires:  xerces-j2-javadoc-xni
-BuildRequires:  xerces-j2-javadoc-apis
-BuildRequires:  isorelax-javadoc
-BuildRequires:  relaxngDatatype-javadoc
-Requires:         jpackage-utils >= 0:1.6
-Requires(postun): jpackage-utils >= 0:1.6
+# Link to locally installed javadocs
+Patch2:        %{name}-link-local-javadoc.patch
 
-%if ! %{gcj_support}
-BuildRequires:  java-devel
-BuildArch:      noarch
-%endif
-BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root
+BuildRequires: java-devel
+BuildRequires: java-javadoc
+BuildRequires: jpackage-utils
+BuildRequires: maven-compiler-plugin
+BuildRequires: maven-install-plugin
+BuildRequires: maven-jar-plugin
+BuildRequires: maven-javadoc-plugin
+BuildRequires: maven-resources-plugin
+BuildRequires: maven-site-plugin
+BuildRequires: maven-surefire-plugin
+BuildRequires: maven-surefire-provider-junit4
+BuildRequires: maven-plugin-build-helper
+BuildRequires: isorelax
+BuildRequires: isorelax-javadoc
+BuildRequires: relaxngDatatype
+BuildRequires: relaxngDatatype-javadoc
+BuildRequires: xalan-j2
+BuildRequires: xerces-j2
+BuildRequires: junit
 
-%if %{gcj_support}
-BuildRequires:    java-gcj-compat-devel
-%endif
+BuildArch:     noarch
 
 %description
-The Sun Multi-Schema XML Validator (MSV) is a Java 
-technology tool to validate XML documents against 
-several kinds of XML schemata. It supports RELAX NG, 
-RELAX Namespace, RELAX Core, TREX, XML DTDs, and a 
-subset of XML Schema Part 1. This latest (version 1.2) 
-release includes several bug fixes and adds better 
-conformance to RELAX NG/W3C XML standards and JAXP 
-masquerading. 
+The Sun Multi-Schema XML Validator (MSV) is a Java technology tool to validate
+XML documents against several kinds of XML schemata. It supports RELAX NG,
+RELAX Namespace, RELAX Core, TREX, XML DTDs, and a subset of XML Schema Part 1.
+This latest (version 1.2) release includes several bug fixes and adds better
+conformance to RELAX NG/W3C XML standards and JAXP masquerading.
 
-%package        msv
-Summary:        MSV proper
-Group:          Development/Java
-Requires:       isorelax
-Requires:       relaxngDatatype
-Requires:       servlet
-Requires:       xerces-j2
-Requires:       xml-commons-jaxp-1.3-apis
-Requires:       xml-commons-resolver12
-Requires:       msv-xsdlib
-Requires:         jpackage-utils >= 0:1.6
-Provides:       msv-strict <= %{version}-%{release}
-Obsoletes:      msv-strict <= %{version}-%{release}
+%package       msv
+Summary:       Multi-Schema Validator Core
+Group:         Development/Java
+Requires:      jpackage-utils
+Requires:      java
+Requires:      isorelax
+Requires:      relaxngDatatype
+Requires:      xerces-j2
+Requires:      msv-xsdlib
 
-%description    msv
+%description   msv
 %{summary}.
 
-%package        msv-javadoc
-Summary:        Javadoc for MSV proper
-Group:          Development/Java
-Requires:         jpackage-utils >= 0:1.6
-Provides:       msv-strict-javadoc <= %{version}-%{release}
-Obsoletes:      msv-strict-javadoc <= %{version}-%{release}
+%package       relames
+Summary:       Multi-Schema Validator Schematron Plugin
+Group:         Development/Java
+Requires:      jpackage-utils
+Requires:      java
+Requires:      isorelax
+Requires:      relaxngDatatype
+Requires:      xalan-j2
+Requires:      xerces-j2
+Requires:      msv-msv
+Requires:      msv-xsdlib
 
-%description    msv-javadoc
+%description   relames
 %{summary}.
 
-%package        demo
-Summary:        Samples for %{name}
-Group:          Development/Java
-Requires:       msv-msv
-Requires:       msv-xsdlib
-Requires:         jpackage-utils >= 0:1.6
+%package       rngconv
+Summary:       Multi-Schema Validator RNG Converter
+Group:         Development/Java
+Requires:      jpackage-utils
+Requires:      java
+Requires:      isorelax
+Requires:      relaxngDatatype
+Requires:      xerces-j2
+Requires:      msv-msv
+Requires:      msv-xsdlib
 
-%description    demo
+%description   rngconv
 %{summary}.
 
-%package        relames
-Summary:        Relames 
-Group:          Development/Java
-Requires:       isorelax
-Requires:       relaxngDatatype
-Requires:       xalan-j2
-Requires:       xerces-j2
-Requires:       xml-commons-jaxp-1.3-apis
-Requires:       xml-commons-resolver12
-Requires:       msv-msv
-Requires:       msv-xsdlib
-Requires:         jpackage-utils >= 0:1.6
-
-%description    relames
-%{summary}.
-
-%package        relames-javadoc
-Summary:        Javadoc for relames
-Group:          Development/Java
-Requires:         jpackage-utils >= 0:1.6
-
-%description    relames-javadoc
-%{summary}.
-
-%package        rngconv
-Summary:        Rngconv
-Group:          Development/Java
-Requires:       isorelax
-Requires:       relaxngDatatype
-Requires:       xerces-j2
-Requires:       xml-commons-jaxp-1.3-apis
-Requires:       msv-msv
-Requires:       msv-xsdlib
-Requires:         jpackage-utils >= 0:1.6
-
-%description    rngconv
-%{summary}.
-
-%package        xmlgen
-Summary:        XmlGen
-Group:          Development/Java
-Requires:       isorelax
-Requires:       relaxngDatatype
-Requires:       xml-commons-jaxp-1.3-apis
-Requires:       xerces-j2
-Requires:       msv-msv
-Requires:       msv-xsdlib
-Requires:         jpackage-utils >= 0:1.6
+%package       xmlgen
+Summary:       Multi-Schema Validator Generator
+Group:         Development/Java
+Requires:      jpackage-utils
+Requires:      java
+Requires:      isorelax
+Requires:      relaxngDatatype
+Requires:      xerces-j2
+Requires:      msv-msv
+Requires:      msv-xsdlib
 
 %description    xmlgen
 %{summary}.
 
-%package        xmlgen-javadoc
-Summary:        Javadoc for xmlgen
-Group:          Development/Java
-Requires:         jpackage-utils >= 0:1.6
+%package       xsdlib
+Summary:       Multi-Schema Validator XML Schema Library
+Group:         Development/Java
+Requires:      jpackage-utils
+Requires:      java
+Requires:      isorelax
+Requires:      relaxngDatatype
+Requires:      xerces-j2
 
-%description    xmlgen-javadoc
+# Can remove these obsoletes at Fedora 17 time
+Obsoletes:     xsdlib < %{version}-%{release}
+
+%description   xsdlib
 %{summary}.
 
-%package        xsdlib
-Summary:        Xsdlib
-Group:          Development/Java
-Requires:       relaxngDatatype
-Provides:       xsdlib <= %{version}-%{release}
-Obsoletes:      xsdlib <= %{version}-%{release}
-Requires:         jpackage-utils >= 0:1.6
+%package       javadoc
+Summary:       API documentation for Multi-Schema Validator
+Group:         Development/Java
+Requires:      java-javadoc
+Requires:      jpackage-utils
+Requires:      isorelax-javadoc
+Requires:      relaxngDatatype-javadoc
 
-%description    xsdlib
+# Can remove these obsoletes at Fedora 17 time
+Obsoletes:     msv-msv-javadoc < %{version}-%{release}
+Obsoletes:     msv-relames-javadoc < %{version}-%{release}
+Obsoletes:     msv-xmlgen-javadoc < %{version}-%{release}
+Obsoletes:     msv-xsdlib-javadoc < %{version}-%{release}
+Obsoletes:     xsdlib-javadoc < %{version}-%{release}
+
+%description   javadoc
 %{summary}.
 
-%package        xsdlib-javadoc
-Summary:        Javadoc for xsdlib
-Group:          Development/Java
-Provides:       xsdlib-javadoc <= %{version}-%{release}
-Obsoletes:      xsdlib-javadoc <= %{version}-%{release}
-Requires:         jpackage-utils >= 0:1.6
+%package       manual
+Summary:       Manual for Multi-Schema Validator
+Group:         Development/Java
 
-%description    xsdlib-javadoc
+%description   manual
 %{summary}.
 
-%package        manual
-Summary:        Documents for %{name}
-Group:          Development/Java
-Requires:         jpackage-utils >= 0:1.6
+%package       demo
+Summary:       Samples for Multi-Schema Validator
+Group:         Development/Java
+Requires:      msv-msv
+Requires:      msv-xsdlib
+Requires:      jpackage-utils
 
-%description    manual
+%description   demo
 %{summary}.
 
 %prep
-%setup -q -n %{name}-%{cvsdate}
-cp %{SOURCE1} xsdlib/src/com/sun/msv/datatype/xsd/DateType.java
-# remove all binary libs
-find . -name "*.jar" -exec rm -f {} \;
-# delete Class-Path: from manifests
-for m in $(find . -name MANIFEST.MF); do
-sed -e '/^Class-path:/d' $m > tempf
-cp tempf $m
+%setup -q
+
+# Delete anything pre-compiled
+find -name '*.class' -exec rm -f '{}' \;
+find -name '*.jar' -exec rm -f '{}' \;
+find -name '*.zip' -exec rm -f '{}' \;
+
+# Delete class-path entries from manifests
+for m in $(find . -name MANIFEST.MF) ; do
+  sed --in-place -e '/^[Cc]lass-[Pp]ath:/d' $m
 done
-rm tempf
 
-%patch0 -p0 -b .sav
-%patch1 -p0 -b .sav2
-%patch2 -p0
+# Apply patches
+%patch0 -p0 -b .orig
+%patch1 -p0 -b .orig
+%patch2 -p0 -b .orig2
 
-%{__perl} -pi -e 's/1\.[23]/1.4/g' `find . -type f -name build.xml`
+# Change encoding of non utf-8 files
+for m in $(find . -name copyright.txt) ; do
+  iconv -f iso-8859-1 -t utf-8 < $m > $m.utf8
+  mv $m.utf8 $m
+done
 
 %build
-pushd shared/lib
-ln -sf $(build-classpath ant) ant.jar
-#ln -sf $(build-classpath crimson) crimson.jar
-#ln -sf $(build-classpath dom4j) dom4j.jar
-ln -sf $(build-classpath isorelax) isorelax.jar
-ln -sf $(build-classpath junit) junit.jar
-ln -sf $(build-classpath relaxngDatatype) relaxngDatatype.jar
-ln -sf $(build-classpath xml-commons-resolver12) resolver.jar
-%if ! %{bootstrap}
-ln -sf $(build-classpath jdom) jdom.jar
-ln -sf $(build-classpath saxon) saxon.jar
-%endif
-ln -sf $(build-classpath servlet) servlet.jar
-ln -sf $(build-classpath xalan-j2) xalan.jar
-ln -sf $(build-classpath xerces-j2) xercesImpl.jar
-ln -sf $(build-classpath xml-commons-jaxp-1.3-apis) xmlParserAPIs.jar
-popd
-
-%{ant} -Dant.build.javac.source=1.4 release
+mvn-rpmbuild install javadoc:aggregate
 
 %install
-rm -rf $RPM_BUILD_ROOT
+# Jars
+install -pD -T msv/target/%{name}-core-%{version}.jar \
+  %{buildroot}%{_javadir}/%{name}-core.jar
+install -pD -T relames/target/%{name}-relames-%{version}.jar \
+  %{buildroot}%{_javadir}/%{name}-relames.jar
+install -pD -T rngconverter/target/%{name}-rngconverter-%{version}.jar \
+  %{buildroot}%{_javadir}/%{name}-rngconverter.jar
+install -pD -T generator/target/%{name}-generator-%{version}.jar \
+  %{buildroot}%{_javadir}/%{name}-generator.jar
+install -pD -T xsdlib/target/xsdlib-%{version}.jar \
+  %{buildroot}%{_javadir}/xsdlib.jar
+install -pD -T testharness/target/%{name}-testharness-%{version}.jar \
+  %{buildroot}%{_javadir}/%{name}-testharness.jar
 
-# jars
-install -d -m 755 $RPM_BUILD_ROOT%{_javadir}
+# Alternate jar names
+ln -s %{name}-core.jar         \
+  %{buildroot}%{_javadir}/%{name}-msv.jar
+ln -s %{name}-rngconverter.jar \
+  %{buildroot}%{_javadir}/%{name}-rngconv.jar
+ln -s %{name}-generator.jar    \
+  %{buildroot}%{_javadir}/%{name}-xmlgen.jar
+ln -s xsdlib.jar               \
+  %{buildroot}%{_javadir}/%{name}-xsdlib.jar
 
-install -m 644 package/msv.jar \
-  $RPM_BUILD_ROOT%{_javadir}/%{name}-msv-%{version}.jar
-install -m 644 package/relames.jar \
-  $RPM_BUILD_ROOT%{_javadir}/%{name}-relames-%{version}.jar
-install -m 644 package/rngconv.jar \
-  $RPM_BUILD_ROOT%{_javadir}/%{name}-rngconv-%{version}.jar
-install -m 644 package/xmlgen.jar \
-  $RPM_BUILD_ROOT%{_javadir}/%{name}-xmlgen-%{version}.jar
-install -m 644 package/xsdlib.jar \
-  $RPM_BUILD_ROOT%{_javadir}/%{name}-xsdlib-%{version}.jar
-(cd $RPM_BUILD_ROOT%{_javadir} && for jar in *-%{version}.jar; do ln -sf ${jar} `echo $jar| sed "s|-%{version}||g"`; done)
-(cd $RPM_BUILD_ROOT%{_javadir} 
-ln -sf msv-msv.jar msv-strict.jar
-ln -sf msv-xsdlib.jar xsdlib.jar
-)
+# Poms
+install -pD -T -m 644 pom.xml              %{buildroot}%{_mavenpomdir}/JPP-msv.pom
+install -pD -T -m 644 parent/pom.xml       %{buildroot}%{_mavenpomdir}/JPP-msv-parent.pom
+install -pD -T -m 644 msv/pom.xml          %{buildroot}%{_mavenpomdir}/JPP-msv-core.pom
+install -pD -T -m 644 relames/pom.xml      %{buildroot}%{_mavenpomdir}/JPP-msv-relames.pom
+install -pD -T -m 644 rngconverter/pom.xml %{buildroot}%{_mavenpomdir}/JPP-msv-rngconverter.pom
+install -pD -T -m 644 generator/pom.xml    %{buildroot}%{_mavenpomdir}/JPP-msv-generator.pom
+install -pD -T -m 644 testharness/pom.xml  %{buildroot}%{_mavenpomdir}/JPP-msv-testharness.pom
+install -pD -T -m 644 xsdlib/pom.xml       %{buildroot}%{_mavenpomdir}/JPP-xsdlib.pom
+%add_to_maven_depmap net.java.dev.msv msv              %{version} JPP msv
+%add_to_maven_depmap net.java.dev.msv msv-parent       %{version} JPP msv-parent
+%add_to_maven_depmap net.java.dev.msv msv-core         %{version} JPP msv-core
+%add_to_maven_depmap net.java.dev.msv msv-relames      %{version} JPP msv-relames
+%add_to_maven_depmap net.java.dev.msv msv-rngconverter %{version} JPP msv-rngconverter
+%add_to_maven_depmap net.java.dev.msv msv-generator    %{version} JPP msv-generator
+%add_to_maven_depmap net.java.dev.msv msv-testharness  %{version} JPP msv-testharness
+%add_to_maven_depmap net.java.dev.msv xsdlib           %{version} JPP xsdlib
+%add_to_maven_depmap msv msv         %{version} JPP msv-core
+%add_to_maven_depmap com.sun.msv.datatype.xsd xsdlib   %{version} JPP xsdlib
 
-# javadoc
-install -d -m 755 $RPM_BUILD_ROOT%{_javadocdir}/%{name}
-install -d -m 755 $RPM_BUILD_ROOT%{_javadocdir}/%{name}/msv
-cp -pr msv/dist/javadoc/* \
-                $RPM_BUILD_ROOT%{_javadocdir}/%{name}/msv
-install -d -m 755 $RPM_BUILD_ROOT%{_javadocdir}/%{name}/relames
-cp -pr relames/dist/javadoc/* \
-                $RPM_BUILD_ROOT%{_javadocdir}/%{name}/relames
-install -d -m 755 $RPM_BUILD_ROOT%{_javadocdir}/%{name}/xmlgen
-cp -pr generator/dist/javadoc/* \
-                $RPM_BUILD_ROOT%{_javadocdir}/%{name}/xmlgen
-install -d -m 755 $RPM_BUILD_ROOT%{_javadocdir}/%{name}/xsdlib
-cp -pr xsdlib/dist/javadoc/* \
-                $RPM_BUILD_ROOT%{_javadocdir}/%{name}/xsdlib
+# Javadocs
+install -d -m 755 %{buildroot}%{_javadocdir}/%{name}
+cp -pr target/site/apidocs/* %{buildroot}%{_javadocdir}/%{name}
 
-# docs
-install -d -m 755 $RPM_BUILD_ROOT%{_docdir}/%{name}
-install -d -m 755 $RPM_BUILD_ROOT%{_docdir}/%{name}/msv
-install -m 644 msv/doc/* \
-                  $RPM_BUILD_ROOT%{_docdir}/%{name}/msv
-rm $RPM_BUILD_ROOT%{_docdir}/%{name}/msv/Apache-LICENSE-1.1.txt
-install -d -m 755 $RPM_BUILD_ROOT%{_docdir}/%{name}/relames
-install -m 644 relames/doc/* \
-                  $RPM_BUILD_ROOT%{_docdir}/%{name}/relames
-rm $RPM_BUILD_ROOT%{_docdir}/%{name}/relames/Apache-LICENSE-1.1.txt
-install -d -m 755 $RPM_BUILD_ROOT%{_docdir}/%{name}/rngconv
-install -m 644 rngconverter/doc/* \
-                  $RPM_BUILD_ROOT%{_docdir}/%{name}/rngconv
-rm $RPM_BUILD_ROOT%{_docdir}/%{name}/rngconv/Apache-LICENSE-1.1.txt
-install -d -m 755 $RPM_BUILD_ROOT%{_docdir}/%{name}/xmlgen
-install -m 644 generator/doc/* \
-                  $RPM_BUILD_ROOT%{_docdir}/%{name}/xmlgen
-rm $RPM_BUILD_ROOT%{_docdir}/%{name}/xmlgen/Apache-LICENSE-1.1.txt
-install -d -m 755 $RPM_BUILD_ROOT%{_docdir}/%{name}/xsdlib
-install -m 644 xsdlib/doc/* \
-                  $RPM_BUILD_ROOT%{_docdir}/%{name}/xsdlib
-rm $RPM_BUILD_ROOT%{_docdir}/%{name}/xsdlib/Apache-LICENSE-1.1.txt
+# Manuals
+install -d -m 755 %{buildroot}%{_docdir}/%{name}-%{version}/msv
+install -m 644 msv/doc/*.html     %{buildroot}%{_docdir}/%{name}-%{version}/msv
+install -m 644 msv/doc/*.gif      %{buildroot}%{_docdir}/%{name}-%{version}/msv
+install -m 644 msv/doc/README.txt %{buildroot}%{_docdir}/%{name}-%{version}/msv
 
-#examples
-install -d -m 755 $RPM_BUILD_ROOT%{_datadir}/%{name}-%{version}/msv
-cp -pr msv/dist/examples/* $RPM_BUILD_ROOT%{_datadir}/%{name}-%{version}/msv
-install -d -m 755 $RPM_BUILD_ROOT%{_datadir}/%{name}-%{version}/xsdlib
-cp -pr xsdlib/dist/examples/* $RPM_BUILD_ROOT%{_datadir}/%{name}-%{version}/xsdlib
+install -d -m 755 %{buildroot}%{_docdir}/%{name}-%{version}/relames
+install -m 644 relames/doc/README.txt %{buildroot}%{_docdir}/%{name}-%{version}/relames
 
-%if %{gcj_support}
-#export CLASSPATH=$(build-classpath gnu-crypto)
-%{_bindir}/aot-compile-rpm --exclude usr/share/%{name}-%{version}/%{name}
-%endif
+install -d -m 755 %{buildroot}%{_docdir}/%{name}-%{version}/rngconverter
+install -m 644 rngconverter/doc/README.txt %{buildroot}%{_docdir}/%{name}-%{version}/rngconverter
 
-%clean
-rm -rf $RPM_BUILD_ROOT
+install -d -m 755 %{buildroot}%{_docdir}/%{name}-%{version}/generator
+install -m 644 generator/doc/*.html     %{buildroot}%{_docdir}/%{name}-%{version}/generator
+install -m 644 generator/doc/README.txt %{buildroot}%{_docdir}/%{name}-%{version}/generator
 
-%if %{gcj_support}
-%post
-%{update_gcjdb}
+install -d -m 755 %{buildroot}%{_docdir}/%{name}-%{version}/xsdlib
+install -m 644 xsdlib/doc/*.html     %{buildroot}%{_docdir}/%{name}-%{version}/xsdlib
+install -m 644 xsdlib/doc/README.txt %{buildroot}%{_docdir}/%{name}-%{version}/xsdlib
 
-%postun
-%{clean_gcjdb}
-%endif
+# Examples
+install -d -m 755 %{buildroot}%{_datadir}/%{name}-%{version}/msv
+cp -pr msv/examples/* %{buildroot}%{_datadir}/%{name}-%{version}/msv
+install -d -m 755 %{buildroot}%{_datadir}/%{name}-%{version}/xsdlib
+cp -pr xsdlib/examples/* %{buildroot}%{_datadir}/%{name}-%{version}/xsdlib
+
+# Scripts
+%jpackage_script com.sun.msv.driver.textui.Driver "" "" msv-msv:msv-xsdlib:relaxngDatatype:isorelax msv true
+%jpackage_script com.sun.msv.generator.Driver "" "" msv-xmlgen:msv-msv:msv-xsdlib:relaxngDatatype:isorelax:xerces-j2 xmlgen true
+%jpackage_script com.sun.msv.schematron.Driver "" "" msv-relames:msv-msv:msv-xsdlib:relaxngDatatype:isorelax:xalan-j2 relames true
+%jpackage_script com.sun.msv.writer.relaxng.Driver "" "" msv-rngconv:msv-msv:msv-xsdlib:relaxngDatatype:isorelax:xerces-j2 rngconv true
 
 %files msv
-%defattr(0644,root,root,0755)
-%{_javadir}/%{name}-msv-%{version}.jar
+%{_bindir}/msv
+%{_mavenpomdir}/JPP-%{name}-core.pom
+%{_mavenpomdir}/JPP-%{name}-testharness.pom
+%{_javadir}/%{name}-core.jar
 %{_javadir}/%{name}-msv.jar
-%{_javadir}/msv-strict.jar
-%doc %{_docdir}/%{name}/msv/license.txt
-%doc %{_docdir}/%{name}/msv/copyright.txt
-%if %{gcj_support}
-%dir %attr(-,root,root) %{_libdir}/gcj/%{name}
-%attr(-,root,root) %{_libdir}/gcj/%{name}/%{name}-msv*
-%endif
-
-%files msv-javadoc
-%defattr(0644,root,root,0755)
-%doc %{_javadocdir}/%{name}/msv
-
-%files demo
-%defattr(0644,root,root,0755)
-%{_datadir}/%{name}-%{version}/msv
-%{_datadir}/%{name}-%{version}/xsdlib
+%{_javadir}/%{name}-testharness*
+%doc msv/doc/license.txt
 
 %files relames
-%defattr(0644,root,root,0755)
-%{_javadir}/%{name}-relames-%{version}.jar
+%{_bindir}/relames
+%{_mavenpomdir}/JPP-%{name}-relames.pom
 %{_javadir}/%{name}-relames.jar
-#%{_docdir}/%{name}/relames/license.txt
-%doc %{_docdir}/%{name}/relames/copyright.txt
-%if %{gcj_support}
-%attr(-,root,root) %{_libdir}/gcj/%{name}/%{name}-relames*
-%endif
-
-%files relames-javadoc
-%defattr(0644,root,root,0755)
-%doc %{_javadocdir}/%{name}/relames
+%doc relames/doc/copyright.txt
 
 %files rngconv
-%defattr(0644,root,root,0755)
-%{_javadir}/%{name}-rngconv-%{version}.jar
+%{_bindir}/rngconv
+%{_mavenpomdir}/JPP-%{name}-rngconverter.pom
+%{_javadir}/%{name}-rngconverter.jar
 %{_javadir}/%{name}-rngconv.jar
-%doc %{_docdir}/%{name}/rngconv/license.txt
-%doc %{_docdir}/%{name}/rngconv/copyright.txt
-%if %{gcj_support}
-%attr(-,root,root) %{_libdir}/gcj/%{name}/%{name}-rngconv*
-%endif
+%doc rngconverter/doc/license.txt
+%doc rngconverter/doc/copyright.txt
 
 %files xmlgen
-%defattr(0644,root,root,0755)
-%{_javadir}/%{name}-xmlgen-%{version}.jar
+%{_bindir}/xmlgen
+%{_mavenpomdir}/JPP-%{name}-generator.pom
+%{_javadir}/%{name}-generator.jar
 %{_javadir}/%{name}-xmlgen.jar
-%doc %{_docdir}/%{name}/xmlgen/license.txt
-%doc %{_docdir}/%{name}/xmlgen/copyright.txt
-%if %{gcj_support}
-%attr(-,root,root) %{_libdir}/gcj/%{name}/%{name}-xmlgen*
-%endif
-
-%files xmlgen-javadoc
-%defattr(0644,root,root,0755)
-%doc %{_javadocdir}/%{name}/xmlgen
+%doc generator/doc/license.txt
+%doc generator/doc/copyright.txt
 
 %files xsdlib
-%defattr(0644,root,root,0755)
-%{_javadir}/%{name}-xsdlib-%{version}.jar
-%{_javadir}/%{name}-xsdlib.jar
+%{_mavenpomdir}/JPP-xsdlib.pom
 %{_javadir}/xsdlib.jar
-%doc %{_docdir}/%{name}/xsdlib/license.txt
-%doc %{_docdir}/%{name}/xsdlib/copyright.txt
-%if %{gcj_support}
-%attr(-,root,root) %{_libdir}/gcj/%{name}/%{name}-xsdlib*
-%endif
+%{_javadir}/%{name}-xsdlib.jar
+%doc xsdlib/doc/license.txt
+%doc xsdlib/doc/copyright.txt
 
-%files xsdlib-javadoc
-%defattr(0644,root,root,0755)
-%doc %{_javadocdir}/%{name}/xsdlib
+# This subpackage wins the parent poms and the depmap because all the other
+# subpackages require this one
+%{_mavenpomdir}/JPP-%{name}.pom
+%{_mavenpomdir}/JPP-%{name}-parent.pom
+%{_mavendepmapfragdir}/*
+
+%files javadoc
+%{_javadocdir}/%{name}
 
 %files manual
-%defattr(0644,root,root,0755)
-%doc %{_docdir}/%{name}/msv/ChangeLog.txt
-%doc %{_docdir}/%{name}/msv/*.html
-%doc %{_docdir}/%{name}/msv/*.gif
-%doc %{_docdir}/%{name}/msv/README.txt
-%doc %{_docdir}/%{name}/relames/README.txt
-%doc %{_docdir}/%{name}/rngconv/README.txt
-%doc %{_docdir}/%{name}/xmlgen/*.html
-%doc %{_docdir}/%{name}/xmlgen/README.txt
-%doc %{_docdir}/%{name}/xsdlib/*.html
-%doc %{_docdir}/%{name}/xsdlib/README.txt
+%doc %{_docdir}/%{name}-%{version}
+
+%files demo
+%{_datadir}/%{name}-%{version}
+

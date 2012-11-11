@@ -1,0 +1,24 @@
+--- pom.xml.orig	2009-06-10 19:33:50.000000000 +0100
++++ pom.xml	2010-09-18 13:16:55.901247026 +0100
+@@ -62,6 +62,7 @@
+         <module>msv</module>
+         <module>generator</module>
+         <module>rngconverter</module>
++        <module>relames</module>
+     </modules>
+ 
+     <profiles>
+@@ -188,13 +189,6 @@
+                 </plugin>
+             </plugins>
+         </pluginManagement>
+-        <extensions>
+-            <extension>
+-                <groupId>org.jvnet.wagon-svn</groupId>
+-                <artifactId>wagon-svn</artifactId>
+-                <version>1.8</version>
+-            </extension>
+-        </extensions>
+     </build>
+     <reporting>
+         <plugins>

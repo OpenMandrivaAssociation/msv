@@ -1,0 +1,44 @@
+--- relames/pom.xml.orig	2009-03-14 16:03:30.000000000 +0000
++++ relames/pom.xml	2010-09-18 13:55:25.927247417 +0100
+@@ -3,12 +3,12 @@
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>net.java.dev.msv</groupId>
+   <artifactId>msv-relames</artifactId>
+-  <version>2009.1-SNAPSHOT</version>
++  <version>2009.1</version>
+   <name>MSV Schematron Plugin</name>
+   <parent>
+     <groupId>net.java.dev.msv</groupId>
+     <artifactId>msv-parent</artifactId>
+-    <version>2009.1-SNAPSHOT</version>
++    <version>2009.1</version>
+     <relativePath>../parent/pom.xml</relativePath>
+   </parent>
+ 
+@@ -88,10 +88,6 @@
+       <artifactId>isorelax</artifactId>
+     </dependency>
+     <dependency>
+-      <groupId>crimson</groupId>
+-      <artifactId>crimson</artifactId>
+-    </dependency>
+-    <dependency>
+       <groupId>relaxngDatatype</groupId>
+       <artifactId>relaxngDatatype</artifactId>
+     </dependency>
+--- relames/src/com/sun/msv/schematron/verifier/RelmesVerifier.java.orig	2010-09-18 14:01:07.461250681 +0100
++++ relames/src/com/sun/msv/schematron/verifier/RelmesVerifier.java	2010-09-18 14:01:18.194245268 +0100
+@@ -88,13 +88,6 @@
+                     } catch( Throwable t ) {
+                         // ignore any error. it wasn't Xerces.
+                     }
+-                    try {
+-                        // Crimson?
+-                        ((org.apache.crimson.tree.ElementNode2)super.parent)
+-                            .setIdAttributeName(atts.getQName(i));
+-                    } catch( Throwable t ) {
+-                        // ignore any error. it wasn't Crimson.
+-                    }
+                 }
+             }
+ 		}

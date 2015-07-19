@@ -2,7 +2,7 @@
 Name:          msv
 Epoch:         1
 Version:       2013.6.1
-Release:       4.1
+Release:       4.2
 Summary:       Multi-Schema Validator
 Group:         Development/Java 
 License:       BSD and ASL 1.1

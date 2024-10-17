@@ -6,7 +6,7 @@ Release:       4.3
 Summary:       Multi-Schema Validator
 Group:         Development/Java 
 License:       BSD and ASL 1.1
-URL:           http://msv.java.net/
+URL:           https://msv.java.net/
 
 # To generate tarball from upstream source control:
 # $ ./create-tarball
